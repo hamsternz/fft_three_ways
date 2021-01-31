@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define FFT_SIZE 16384
-#define DFT_SIZE  8        // When we DFT rather than FFT
-#define I_SCALE      2     // Scale factor for the integer FFT data (e.g 24 bits -> 24+I_SCALE bits)
+#define FFT_SIZE  16384
+#define DFT_SIZE      8        // When we DFT rather than FFT
+#define I_SCALE       2     // Scale factor for the integer FFT data (e.g 24 bits -> 24+I_SCALE bits)
 #define I_TRIG_SCALE 22    // Scale factor for the integer TRIG constants (e.g cos(0) = 1<<I_TRIG_SCALE)
 
 static double    d_sines[FFT_SIZE], d_cosines[FFT_SIZE];
@@ -37,14 +37,14 @@ static void print_out( double    *d_r, double    *d_i,
                        float     *f_r, float     *f_i, 
                        long long *i_r, long long *i_i, 
                        int size) {
-   printf("bin  ====  Doubles ========== "
-              " ==== Floats ===========  == err (double-float) == "
-              " ====== Fixed point ====  == err (double-fixed) ==\n");
+   printf("  bin  ====  Doubles ========== "
+              " ==== Floats ===========  == err double-float === "
+              " ====== Fixed point ====  == err double-fixed ===\n");
    for(int i = 0; i < size; i++) {
       if(i < 128 || i > FFT_SIZE-129) {
-         printf("%3i, (%10.2f, %10.2f), "
+         printf("%5i, (%10.2f, %10.2f), "
                   "(%10.2f,%10.2f), (%10.2f,%10.2f), "
-                  "(%10.2f,%10.2f), (%10.2f, %10.2f)\n", 
+                  "(%10.2f,%10.2f), (%10.2f,%10.2f)\n", 
               i,
               d_r[i], d_i[i],
               f_r[i], f_i[i],
@@ -71,7 +71,7 @@ static int reverse_bits(int i, int max) {
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-static void d_dft(double *r_i, double *i_i, double *r_o, double *i_o, int size, int stride) {
+void d_dft(double *r_i, double *i_i, double *r_o, double *i_o, int size, int stride) {
    for(int bin = 0; bin < size; bin++) {
       int i = 0;
       double total_i = 0.0;
@@ -87,7 +87,7 @@ static void d_dft(double *r_i, double *i_i, double *r_o, double *i_o, int size, 
    }
 }
 
-static void d_fft(double *r_i, double *i_i, double *r_o, double *i_o, int size) {
+void d_fft(double *r_i, double *i_i, double *r_o, double *i_o, int size) {
     int i, stride, step;
 
     stride = size/DFT_SIZE;
@@ -122,7 +122,7 @@ static void d_fft(double *r_i, double *i_i, double *r_o, double *i_o, int size) 
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-static void f_dft(float *r_i, float *i_i, float *r_o, float *i_o, int size, int stride) {
+void f_dft(float *r_i, float *i_i, float *r_o, float *i_o, int size, int stride) {
    for(int bin = 0; bin < size; bin++) {
       int i = 0;
       float total_i = 0.0;
@@ -138,7 +138,7 @@ static void f_dft(float *r_i, float *i_i, float *r_o, float *i_o, int size, int 
    }
 }
 
-static void f_fft(float *r_i, float *i_i, float *r_o, float *i_o, int size) {
+void f_fft(float *r_i, float *i_i, float *r_o, float *i_o, int size) {
     int i, stride, step;
 
     stride = size/DFT_SIZE;
@@ -173,7 +173,7 @@ static void f_fft(float *r_i, float *i_i, float *r_o, float *i_o, int size) {
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-static void i_dft(long long *r_i, long long *i_i, long long *r_o, long long *i_o, int size, int stride) {
+void i_dft(long long *r_i, long long *i_i, long long *r_o, long long *i_o, int size, int stride) {
    for(int bin = 0; bin < size; bin++) {
       int i = 0;
       long long total_i = 0.0;
@@ -189,7 +189,7 @@ static void i_dft(long long *r_i, long long *i_i, long long *r_o, long long *i_o
    }
 }
 
-static void i_fft(long long *r_i, long long *i_i, long long *r_o, long long *i_o, int size) {
+void i_fft(long long *r_i, long long *i_i, long long *r_o, long long *i_o, int size) {
     int i, stride, step;
 
     stride = size/DFT_SIZE;
@@ -260,7 +260,7 @@ int main(int argc, char *argv[]) {
       if(i_din_i[i] > i_max) i_max = i_din_r[i];
    }
    init_tables();
-   printf("Input integer data ranges from %i to %i\n", i_min>>I_SCALE, i_max>>I_SCALE);
+   printf("Input integer data ranges from %i to %i\n\n", i_min>>I_SCALE, i_max>>I_SCALE);
    printf("Transform of %5i random complex numbers\n", FFT_SIZE);
    printf("=========================================\n");
 
